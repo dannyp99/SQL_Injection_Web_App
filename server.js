@@ -4,8 +4,8 @@ var fs = require('fs');
 const cors = require('@koa/cors');
 const KoaStatic = require('koa-static');
 const Router = require('@koa/router');
-const mysql = require('mysql');
-const connection = mysql.createConnection({
+const mysql = require('mariadb');
+const connection = mysql.createPool({
 	host: 'localhost',
 	user: 'root',
 	password: 'password',
@@ -14,12 +14,13 @@ const connection = mysql.createConnection({
 
 let file_server = KoaStatic("./web");
 
-connection.connect((err) => {
-	if (err) {
-		console.log('Error connecting to MySQL database: ', err);
-		return;
-	}
-	console.log('MySQL successfully connected');
+var db = connection.getConnection();
+db.then((con) => {
+	console.log("Database Connected");
+	con.end();
+})
+.catch(err => {
+	console.log(err);
 });
 
 var app = new Koa();
@@ -32,22 +33,19 @@ router.get('/', async (context, next) => {
 });
 
 router.get('/students/:id,:password', async (context, next) => {
+	const query = `SELECT * FROM Students WHERE StudentID = ${"'" + context.params.id + "'"} AND password = ${"'" + context.params.password + " '"} LIMIT 1;`;
+	let conn;
 	try {
-		let res;
-		connection.query(`SELECT StudentGrade FROM Students WHERE StudentID = ${"'" + context.params.id + "'"} AND password = ${"'" + context.params.password + " '"} LIMIT 1;`, (err, results, fields) => {
-			if (err) {
-				console.log(err);
-				context.response.status = 400;
-				return;
-			}
-		});
-		const res = ['A', 'A-', 'B', 'FLAG_1', 'C', 'Flag_2'];//results.map(x => x.StudentGrade).join(", ")
+		conn = await connection.getConnection();
+		const results = await conn.query(query);
+		const res = results.map(x => x.StudentGrade);
 		console.log(res);
 		context.response.body = res;
 		context.response.status = 200;
 	} catch (err) {
-		console.log(err);
-		context.response.status = 400;
+		console.error(err);
+	} finally {
+		if (conn) { conn.end(); }
 	}
 });
 
