@@ -33,17 +33,18 @@ router.get('/', async (context, next) => {
 
 router.get('/students/:id,:password', async (context, next) => {
 	try {
+		let res;
 		connection.query(`SELECT StudentGrade FROM Students WHERE StudentID = ${"'" + context.params.id + "'"} AND password = ${"'" + context.params.password + " '"} LIMIT 1;`, (err, results, fields) => {
 			if (err) {
 				console.log(err);
 				context.response.status = 400;
 				return;
 			}
-			const res = results.map(x => x.StudentGrade).join(", ")
-			console.log(res);
-			context.response.body = res;
-			context.response.status = 200;
 		});
+		const res = ['A', 'A-', 'B', 'FLAG_1', 'C', 'Flag_2'];//results.map(x => x.StudentGrade).join(", ")
+		console.log(res);
+		context.response.body = res;
+		context.response.status = 200;
 	} catch (err) {
 		console.log(err);
 		context.response.status = 400;
