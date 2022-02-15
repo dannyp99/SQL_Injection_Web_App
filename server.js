@@ -28,8 +28,21 @@ var router = new Router();
 
 var port = 3000;
 
-router.get('/', async (context, next) => {
-	context.response.body = 'Great success!'
+router.get('/:id', async (context, next) => {
+	console.log("studentID", context.params.id);
+	const query = `SELECT StudentID, password FROM Students WHERE StudentID = ${ connection.escape(context.params.id) } LIMIT 1;`;
+	let conn;
+	try {
+		conn = await connection.getConnection();
+		const results = await conn.query(query);
+		const res = results;
+		context.response.body = res;
+		context.response.status = 200;
+	} catch (err) {
+		console.error(err);
+	} finally {
+		if (conn) { conn.end(); }
+	}
 });
 
 router.get('/students/:id,:password', async (context, next) => {
@@ -39,7 +52,6 @@ router.get('/students/:id,:password', async (context, next) => {
 		conn = await connection.getConnection();
 		const results = await conn.query(query);
 		const res = results.map(x => x.StudentGrade);
-		console.log(res);
 		context.response.body = res;
 		context.response.status = 200;
 	} catch (err) {

@@ -6,11 +6,12 @@ async function getGrade() {
 	if (response.ok) {
 		let content = await response.json();
 		console.log(content);
-		if (document.getElementById('resultGrades') === null && content) {
-			let gradeDisplay = document.createElement('div');
-			gradeDisplay.className = 'center';
-			gradeDisplay.id = 'resultGrades';
-			gradeDisplay.innerHTML = `<p>${content}</p>`;
-		}
+		alert(content);
+//		if (document.getElementById('resultGrades') === null && content) {
+//			let gradeDisplay = document.createElement('div');
+//			gradeDisplay.className = 'center';
+//			gradeDisplay.id = 'resultGrades';
+//			gradeDisplay.innerHTML = `<p>${content}</p>`;
+//		}
 	}
 }
