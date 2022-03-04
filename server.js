@@ -36,6 +36,7 @@ router.get('/:id', async (context, next) => {
 		conn = await connection.getConnection();
 		const results = await conn.query(query);
 		const res = results;
+		console.log(res);
 		context.response.body = res;
 		context.response.status = 200;
 	} catch (err) {

@@ -1,7 +1,7 @@
 async function getStu() {
 	const stuId = document.getElementById("studentId").value;
 	console.log(stuId);
-	let response = await fetch(`/${stuId}`);
+	let response = await fetch(`/info/:${stuId}`);
 	console.log(response);
 	if (response.ok) {
 		const res = await response.json();

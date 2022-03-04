@@ -1,0 +1,10 @@
+[Unit]
+After=network.target
+[Service]
+Environment=NODE_PORT=3000
+Type=simple
+User=root
+ExecStart=usr/local/bin/node /root/web-server/server.js
+Restart=on-failure
+[Install]
+WantedBy=multi-user.target
